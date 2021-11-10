@@ -56,7 +56,7 @@ PACKAGES+=" openssl" # Needed by swi-prolog
 PACKAGES+=" zip" # For smalltalk.
 PACKAGES+=" libssl-dev:i386" # Needed by swi-prolog 32-bit
 PACKAGES+=" zlib1g-dev:i386"
-PACKAGES+=" openjdk-8-jre-headless"
+PACKAGES+=" openjdk-8-jdk"
 
 # Allow 32-bit packages.
 sudo dpkg --add-architecture i386
