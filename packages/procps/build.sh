@@ -1,10 +1,10 @@
 TERMUX_PKG_HOMEPAGE=https://gitlab.com/procps-ng/procps
 TERMUX_PKG_DESCRIPTION="Utilities that give information about processes using the /proc filesystem"
 TERMUX_PKG_LICENSE="LGPL-2.0"
-TERMUX_PKG_VERSION=3.3.15
+TERMUX_PKG_VERSION=3.3.17
 TERMUX_PKG_REVISION=7
 TERMUX_PKG_SRCURL=https://fossies.org/linux/misc/procps-ng-$TERMUX_PKG_VERSION.tar.xz
-TERMUX_PKG_SHA256=10bd744ffcb3de2d591d2f6acf1a54a7ba070fdcc432a855931a5057149f0465
+TERMUX_PKG_SHA256=4518b3e7aafd34ec07d0063d250fd474999b20b200218c3ae56f5d2113f141b4
 TERMUX_PKG_DEPENDS="ncurses"
 TERMUX_PKG_BREAKS="procps-dev"
 TERMUX_PKG_REPLACES="procps-dev"
@@ -15,10 +15,9 @@ TERMUX_PKG_BUILD_IN_SRC=true
 # not provide any functionality prior to android-23:
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 ac_cv_search_dlopen=
-ac_cv_header_error_h=no
-ac_cv_header_stdio_ext_h=no
 --enable-sigwinch
 --disable-modern-top
+--enable-watch8bit
 "
 
 # About kill: https://bugs.launchpad.net/ubuntu/+source/coreutils/+bug/141168:
