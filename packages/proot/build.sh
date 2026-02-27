@@ -22,6 +22,15 @@ termux_step_pre_configure() {
 	CPPFLAGS+=" -DARG_MAX=131072"
 }
 
+termux_step_make_install() {
+	export CROSS_COMPILE=${TERMUX_HOST_PLATFORM}-
+
+	cd $PROOT_DIR/src
+	make clean
+	make V=1
+	make install
+}
+
 termux_step_post_make_install() {
 	mkdir -p $TERMUX_PREFIX/share/man/man1
 	install -m600 $TERMUX_PKG_SRCDIR/doc/proot/man.1 $TERMUX_PREFIX/share/man/man1/proot.1
