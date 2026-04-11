@@ -6,7 +6,7 @@ TERMUX_PKG_VERSION=1.37.0
 TERMUX_PKG_REVISION=3
 TERMUX_PKG_SRCURL=https://busybox.net/downloads/busybox-${TERMUX_PKG_VERSION}.tar.bz2
 TERMUX_PKG_SHA256=3311dff32e746499f4df0d5df04d7eb396382d7e108bb9250e7b519b837043a4
-TERMUX_PKG_DEPENDS="libandroid-selinux"
+TERMUX_PKG_DEPENDS=""
 TERMUX_PKG_BUILD_IN_SRC=true
 
 TERMUX_PKG_SERVICE_SCRIPT=(
@@ -40,9 +40,7 @@ termux_step_configure() {
 
 termux_step_make_install() {
 	# Using unstripped variant. The post-massage step will strip binaries anyway.
-	install -Dm700 "./0_lib/busybox_unstripped" "$TERMUX_PREFIX/bin/busybox"
-	install -Dm700 "./0_lib/libbusybox.so.${TERMUX_PKG_VERSION}_unstripped" "$TERMUX_PREFIX/lib/libbusybox.so.${TERMUX_PKG_VERSION}"
-	ln -sfr "$TERMUX_PREFIX/lib/libbusybox.so.${TERMUX_PKG_VERSION}" "$TERMUX_PREFIX/lib/libbusybox.so"
+	install -Dm700 "./busybox_unstripped" "$TERMUX_PREFIX/bin/busybox"
 
 	# Install busybox man page.
 	install -Dm600 -t "$TERMUX_PREFIX/share/man/man1" "$TERMUX_PKG_SRCDIR/docs/busybox.1"
