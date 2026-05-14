@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://github.com/cargo-bins/cargo-binstall
 TERMUX_PKG_DESCRIPTION="Tool to fetch and install precompiled musl-based static binaries from the Rust ecosystem"
 TERMUX_PKG_LICENSE="GPL-3.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="1.18.1"
+TERMUX_PKG_VERSION="1.19.1"
 TERMUX_PKG_SRCURL="https://github.com/cargo-bins/cargo-binstall/archive/refs/tags/v$TERMUX_PKG_VERSION.tar.gz"
-TERMUX_PKG_SHA256=f6c676221a2f6136fade1504864f8d87c49e793155517ed4d88409ee9a5af605
+TERMUX_PKG_SHA256=78a514462b487556265bb68adf9c0288b0e4263c9b08b583825b1cf685e36697
 TERMUX_PKG_DEPENDS="resolv-conf"
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_AUTO_UPDATE=true
@@ -22,7 +22,7 @@ termux_step_pre_configure() {
 		! -wholename ./vendor/netdev \
 		-exec rm -rf '{}' \;
 
-	find vendor/rustls-platform-verifier -type f -print0 | \
+	find vendor/{rustls-platform-verifier,hickory-resolver} -type f -print0 | \
 		xargs -0 sed -i \
 		-e 's|"android"|"disabling_this_because_it_is_for_building_an_apk"|g' \
 		-e "s|ANDROID|DISABLING_THIS_BECAUSE_IT_IS_FOR_BUILDING_AN_APK|g" \
