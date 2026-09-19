@@ -27,12 +27,16 @@ termux_step_configure() {
 	# Prevent spamming logs with useless warnings to make them more readable.
 	CFLAGS+=" -Wno-ignored-optimization-argument -Wno-unused-command-line-argument"
 
+	# When linking statically, newer NDK libc.a provides symbols that
+	# busybox's missing_syscalls.c also defines (getsid, adjtimex, sethostname).
+	LDFLAGS+=" -Wl,--allow-multiple-definition"
+
 	sed -e "s|@TERMUX_PREFIX@|$TERMUX_PREFIX|g" \
 		-e "s|@TERMUX_SYSROOT@|$TERMUX_STANDALONE_TOOLCHAIN/sysroot|g" \
 		-e "s|@TERMUX_HOST_PLATFORM@|${TERMUX_HOST_PLATFORM}|g" \
 		-e "s|@TERMUX_CFLAGS@|$CFLAGS|g" \
 		-e "s|@TERMUX_LDFLAGS@|$LDFLAGS|g" \
-		-e "s|@TERMUX_LDLIBS@|log|g" \
+		-e "s|@TERMUX_LDLIBS@||g" \
 		"$TERMUX_PKG_BUILDER_DIR/busybox.config" > .config
 	unset CFLAGS LDFLAGS
 	make oldconfig
