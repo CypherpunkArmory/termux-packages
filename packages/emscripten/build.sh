@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://emscripten.org
 TERMUX_PKG_DESCRIPTION="Emscripten: An LLVM-to-WebAssembly Compiler"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="5.0.7"
+TERMUX_PKG_VERSION="6.0.9"
 TERMUX_PKG_SRCURL=git+https://github.com/emscripten-core/emscripten
-TERMUX_PKG_GIT_BRANCH=${TERMUX_PKG_VERSION}
+TERMUX_PKG_GIT_BRANCH="${TERMUX_PKG_VERSION}"
 TERMUX_PKG_DEPENDS="nodejs-lts | nodejs, python"
 TERMUX_PKG_ANTI_BUILD_DEPENDS="nodejs, nodejs-lts, python"
 TERMUX_PKG_HOSTBUILD=true
@@ -16,27 +16,40 @@ TERMUX_PKG_AUTO_UPDATE=true
 # refer termux_step_post_get_source and termux_step_post_massage
 TERMUX_PKG_RM_AFTER_INSTALL="
 opt/emscripten-llvm/bin/amdgpu-arch
+opt/emscripten-llvm/bin/clang-apply-replacements
+opt/emscripten-llvm/bin/clang-change-namespace
 opt/emscripten-llvm/bin/clang-check
 opt/emscripten-llvm/bin/clang-cl
 opt/emscripten-llvm/bin/clang-cpp
+opt/emscripten-llvm/bin/clang-doc
+opt/emscripten-llvm/bin/clang-dxc
 opt/emscripten-llvm/bin/clang-extdef-mapping
 opt/emscripten-llvm/bin/clang-format
 opt/emscripten-llvm/bin/clang-func-mapping
 opt/emscripten-llvm/bin/clang-import-test
+opt/emscripten-llvm/bin/clang-include-cleaner
+opt/emscripten-llvm/bin/clang-include-fixer
 opt/emscripten-llvm/bin/clang-installapi
 opt/emscripten-llvm/bin/clang-linker-wrapper
+opt/emscripten-llvm/bin/clang-move
 opt/emscripten-llvm/bin/clang-nvlink-wrapper
 opt/emscripten-llvm/bin/clang-offload-bundler
 opt/emscripten-llvm/bin/clang-offload-packager
 opt/emscripten-llvm/bin/clang-offload-wrapper
 opt/emscripten-llvm/bin/clang-pseudo
+opt/emscripten-llvm/bin/clang-query
 opt/emscripten-llvm/bin/clang-refactor
 opt/emscripten-llvm/bin/clang-rename
+opt/emscripten-llvm/bin/clang-reorder-fields
 opt/emscripten-llvm/bin/clang-repl
+opt/emscripten-llvm/bin/clang-ssaf-analyzer
 opt/emscripten-llvm/bin/clang-ssaf-format
 opt/emscripten-llvm/bin/clang-ssaf-linker
+opt/emscripten-llvm/bin/clang-ssaf-src-edit-merge
 opt/emscripten-llvm/bin/clang-sycl-linker
+opt/emscripten-llvm/bin/clang-tidy
 opt/emscripten-llvm/bin/diagtool
+opt/emscripten-llvm/bin/find-all-symbols
 opt/emscripten-llvm/bin/git-clang-format
 opt/emscripten-llvm/bin/hmaptool
 opt/emscripten-llvm/bin/llvm-dlltool
@@ -48,8 +61,11 @@ opt/emscripten-llvm/bin/llvm-ml64
 opt/emscripten-llvm/bin/llvm-pdbutil
 opt/emscripten-llvm/bin/llvm-profgen
 opt/emscripten-llvm/bin/llvm-rc
+opt/emscripten-llvm/bin/modularize
 opt/emscripten-llvm/bin/nvptx-arch
 opt/emscripten-llvm/bin/offload-arch
+opt/emscripten-llvm/bin/pp-trace
+opt/emscripten-llvm/bin/run-clang-tidy
 opt/emscripten-llvm/lib/libclang.so*
 opt/emscripten-llvm/share
 opt/emscripten/LICENSE
@@ -57,13 +73,13 @@ opt/emscripten/LICENSE
 
 # https://github.com/emscripten-core/emscripten/issues/11362
 # can switch to stable LLVM to save space once above is fixed
-_LLVM_COMMIT=7b58716d96c3ae4c0c4e6f72e29b16137bb6224b
-_LLVM_TGZ_SHA256=0791c69319e1861e86ccb438d10b1b1816987f2d99b13d7e95ef08f88f0cedf8
+_LLVM_COMMIT=b158b0ae6c559f87be325b8f427c5588e6a48823
+_LLVM_TGZ_SHA256=29064b66a4bec8f33a92022518378b83e2488aae3aea4a4e9285f12948706a2e
 
 # https://github.com/emscripten-core/emscripten/issues/12252
 # upstream says better bundle the right binaryen revision for now
-_BINARYEN_COMMIT=c6a5e65b77a4b6e9d72fa7ba674632aba4b99099
-_BINARYEN_TGZ_SHA256=a807c950b910d247a5f68dd059e775f0c7bda9fecff5a1ef11f4180e1a60ccf8
+_BINARYEN_COMMIT=d03c25ea43d8f147fc222f9b88ff3bf641abe8da
+_BINARYEN_TGZ_SHA256=f16d9e97dc1b7ce3397f0cf10336f015d7aee9ef54f0d6dd98632436388be81a
 
 # https://github.com/emscripten-core/emsdk/blob/main/emsdk.py
 # https://chromium.googlesource.com/emscripten-releases/+/refs/heads/main/src/build.py
@@ -80,7 +96,7 @@ _LLVM_BUILD_ARGS="
 -DLLVM_ENABLE_LIBPFM=OFF
 -DLLVM_ENABLE_LIBXML2=OFF
 -DLLVM_ENABLE_LTO=Thin
--DLLVM_ENABLE_PROJECTS=clang;lld
+-DLLVM_ENABLE_PROJECTS=clang;clang-tools-extra;lld
 -DLLVM_INCLUDE_BENCHMARKS=OFF
 -DLLVM_INCLUDE_EXAMPLES=OFF
 -DLLVM_INCLUDE_TESTS=OFF
@@ -187,13 +203,13 @@ termux_step_post_get_source() {
 	rm -rf "${TERMUX_PKG_CACHEDIR}/binaryen-${_BINARYEN_COMMIT}"
 	tar -xf "${TERMUX_PKG_CACHEDIR}/binaryen.tar.gz" -C "${TERMUX_PKG_CACHEDIR}"
 
-	local llvm_patches=$(find "${TERMUX_PKG_BUILDER_DIR}" -mindepth 1 -maxdepth 1 -type f -name 'llvm-project-*.diff')
+	local llvm_patches=$(find "${TERMUX_PKG_BUILDER_DIR}" -mindepth 1 -maxdepth 1 -type f -name 'llvm-project-*.diff' | sort)
 	if [[ -n "${llvm_patches}" ]]; then
 		pushd "${TERMUX_PKG_CACHEDIR}/llvm-project-${_LLVM_COMMIT}"
 		for patch in ${llvm_patches}; do
 			patch -p1 -i "${patch}" || :
 		done
-		local llvm_patches_rej=$(find . -type f -name '*.rej')
+		local llvm_patches_rej=$(find . -type f -name '*.rej' | sort)
 		if [[ -n "${llvm_patches_rej}" ]]; then
 			echo "INFO: Patch failed! Printing *.rej files ..."
 			for rej in ${llvm_patches_rej}; do
@@ -205,13 +221,13 @@ termux_step_post_get_source() {
 		popd
 	fi
 
-	local binaryen_patches=$(find "${TERMUX_PKG_BUILDER_DIR}" -mindepth 1 -maxdepth 1 -type f -name 'binaryen-*.diff')
+	local binaryen_patches=$(find "${TERMUX_PKG_BUILDER_DIR}" -mindepth 1 -maxdepth 1 -type f -name 'binaryen-*.diff' | sort)
 	if [[ -n "${binaryen_patches}" ]]; then
 		pushd "${TERMUX_PKG_CACHEDIR}/binaryen-${_BINARYEN_COMMIT}"
 		for patch in ${binaryen_patches}; do
 			patch -p1 -i "${patch}" || :
 		done
-		local binaryen_patches_rej=$(find . -type f -name '*.rej')
+		local binaryen_patches_rej=$(find . -type f -name '*.rej' | sort)
 		if [[ -n "${binaryen_patches_rej}" ]]; then
 			echo "INFO: Patch failed! Printing *.rej files ..."
 			for rej in ${binaryen_patches_rej}; do
@@ -232,7 +248,7 @@ termux_step_host_build() {
 		-G Ninja \
 		-S "${TERMUX_PKG_CACHEDIR}/llvm-project-${_LLVM_COMMIT}/llvm" \
 		-DCMAKE_BUILD_TYPE=Release \
-		-DLLVM_ENABLE_PROJECTS=clang \
+		-DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
 		-DLLVM_INCLUDE_BENCHMARKS=OFF \
 		-DLLVM_INCLUDE_EXAMPLES=OFF \
 		-DLLVM_INCLUDE_TESTS=OFF \
@@ -240,7 +256,7 @@ termux_step_host_build() {
 	ninja \
 		-C "${TERMUX_PKG_HOSTBUILD_DIR}" \
 		-j "${TERMUX_PKG_MAKE_PROCESSES}" \
-		llvm-tblgen clang-tblgen
+		llvm-tblgen clang-tblgen clang-tidy-confusable-chars-gen
 }
 
 termux_step_pre_configure() {
@@ -370,26 +386,43 @@ termux_step_make_install() {
 		-path "*/emscripten-binaryen/bin/*" -o \
 		-path "*/emscripten-binaryen/lib/*" \
 	\) -type f -print0 | \
-		xargs -0 -r file | grep -E "ELF .+ (executable|shared object)" | \
-		cut -d":" -f1 | xargs -r "${STRIP}" --strip-unneeded --preserve-dates
+		xargs -0 -P"${TERMUX_PKG_MAKE_PROCESSES}" -r file | grep -E "ELF .+ (executable|shared object)" | \
+		cut -d":" -f1 | xargs -P"${TERMUX_PKG_MAKE_PROCESSES}" -r "${STRIP}" --strip-unneeded --preserve-dates
 
 	popd
 }
 
+_show_error_message() {
+	echo "ERROR: Mismatch list of $2 with upstream" >&2
+	echo "ERROR: +$1 means downstream has extra $1 that needs to be removed" >&2
+	echo "ERROR: -$1 means downstream is missing $1 that needs to be added" >&2
+}
+
 termux_step_post_massage() {
-	local upstream_bin=$(ls "${TERMUX_PKG_CACHEDIR}/emsdk/upstream/bin")
-	local llvm_bin=$(ls "${TERMUX_TOPDIR}/emscripten/subpackages/emscripten-llvm/massage/${TERMUX_PREFIX_CLASSICAL}/opt/emscripten-llvm/bin")
-	local binaryen_bin=$(ls "${TERMUX_TOPDIR}/emscripten/subpackages/emscripten-binaryen/massage/${TERMUX_PREFIX_CLASSICAL}/opt/emscripten-binaryen/bin")
+	local error=0
+
+	local upstream_bin=$(find "${TERMUX_PKG_CACHEDIR}/emsdk/upstream/bin" -mindepth 1 -maxdepth 1 ! -type d -print0 | xargs -0 -P"${TERMUX_PKG_MAKE_PROCESSES}" -i bash -c "[[ -x '{}' ]] && basename '{}'" | sort)
+	local llvm_bin=$(find "${TERMUX_TOPDIR}/emscripten/subpackages/emscripten-llvm/massage/${TERMUX_PREFIX_CLASSICAL}/opt/emscripten-llvm/bin" -mindepth 1 -maxdepth 1 ! -type d -print0 | xargs -0 -P"${TERMUX_PKG_MAKE_PROCESSES}" -i bash -c "[[ -x '{}' ]] && basename '{}'" | sort)
+	local binaryen_bin=$(find "${TERMUX_TOPDIR}/emscripten/subpackages/emscripten-binaryen/massage/${TERMUX_PREFIX_CLASSICAL}/opt/emscripten-binaryen/bin" -mindepth 1 -maxdepth 1 ! -type d -print0 | xargs -0 -P"${TERMUX_PKG_MAKE_PROCESSES}" -i bash -c "[[ -x '{}' ]] && basename '{}'" | sort)
+
 	local df=$(diff -u <(echo "${upstream_bin}") <(echo -e "${llvm_bin}\n${binaryen_bin}" | sort))
 	if [[ -n "${df}" ]]; then
-		termux_error_exit "Mismatch list of binaries with upstream:\n${df}"
+		_show_error_message "binary" "binaries"
+		echo "${df}"
+		error=1
 	fi
 
-	local upstream_entrypoint=$(find "${TERMUX_PKG_CACHEDIR}/emsdk/upstream/emscripten" -mindepth 1 -maxdepth 1 -type f | xargs -i bash -c "[[ -x '{}' ]] && basename '{}'" | sort)
-	local downstream_entrypoint=$(find "${TERMUX_PREFIX}/opt/emscripten" -mindepth 1 -maxdepth 1 -type f | xargs -i bash -c "[[ -x '{}' ]] && basename '{}'" | sort)
+	local upstream_entrypoint=$(find "${TERMUX_PKG_CACHEDIR}/emsdk/upstream/emscripten" -mindepth 1 -maxdepth 1 ! -type d -print0 | xargs -0 -P"${TERMUX_PKG_MAKE_PROCESSES}" -i bash -c "[[ -x '{}' ]] && basename '{}'" | sort)
+	local downstream_entrypoint=$(find "${TERMUX_PREFIX}/opt/emscripten" -mindepth 1 -maxdepth 1 ! -type d -print0 | xargs -0 -P"${TERMUX_PKG_MAKE_PROCESSES}" -i bash -c "[[ -x '{}' ]] && basename '{}'" | sort)
 	local df2=$(diff -u <(echo "${upstream_entrypoint}") <(echo "${downstream_entrypoint}"))
 	if [[ -n "${df2}" ]]; then
-		termux_error_exit "Mismatch list of entrypoints with upstream:\n${df2}"
+		_show_error_message "entrypoint" "entrypoints"
+		echo "${df2}" >&2
+		error=1
+	fi
+
+	if [[ "${error}" != 0 ]]; then
+		termux_error_exit "Refer above"
 	fi
 }
 

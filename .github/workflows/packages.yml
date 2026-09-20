@@ -32,19 +32,21 @@ concurrency:
   group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.run_id }}
   # only cancel in-progress when it’s a PR
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  # invalid when cancel-in-progress: true and queue: max
+  queue: ${{ github.event_name == 'pull_request' && 'single' || 'max' }}
 
 jobs:
   build:
     permissions:
       contents: read # actions/upload-artifact doesn't need contents: write
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         target_arch: [aarch64, arm, i686, x86_64]
       fail-fast: false
     steps:
     - name: Clone repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         fetch-depth: 1000
 
@@ -254,6 +256,27 @@ jobs:
       run: |
         ./scripts/free-space.sh
 
+    - name: List packages that are still installed on the server
+      if: ${{ steps.build-info.outputs.free-space == 'true' && steps.build-info.outputs.skip-building != 'true' && runner.debug }}
+      run: |
+        dpkg-query -W -f='${Installed-size} ${Package}\n' | sort -n
+
+    - name: List directory size for debug
+      if: ${{ steps.build-info.outputs.free-space == 'true' && steps.build-info.outputs.skip-building != 'true' && runner.debug }}
+      run: |
+        size() {
+          echo "Directory size info for '$1':"
+          du --bytes "$1" --max-depth 1 | sort -n
+          echo
+          echo
+          echo
+        }
+        size /
+        size /usr
+        size /var
+        size /var/lib
+        size /var/
+
     - name: Build packages
       if: ${{ steps.build-info.outputs.skip-building != 'true' }}
       run: |
@@ -303,13 +326,13 @@ jobs:
         find debs -type f -name "*.deb" -exec sha256sum "{}" \; | sort -k2 | tee checksum-${{ matrix.target_arch }}-${{ github.sha }}.txt
     - name: Store checksums for built *.deb files
       if: always()
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: checksum-${{ matrix.target_arch }}-${{ github.sha }}
         path: checksum-${{ matrix.target_arch }}-${{ github.sha }}.txt
     - name: Store *.deb files
       if: always()
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: debs-${{ matrix.target_arch }}-${{ github.sha }}
         path: ./artifacts
@@ -324,7 +347,7 @@ jobs:
     runs-on: ubuntu-slim
     steps:
     - name: Clone repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Randomise buildorder.py test
       run: ./scripts/bin/test-buildorder-random
     - name: Randomise buildorder.py test (aarch64)
@@ -352,9 +375,9 @@ jobs:
     runs-on: ubuntu-slim
     steps:
     - name: Clone repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Get *.deb files
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         path: ./
     - name: Check packages using Packages.bz2
@@ -374,41 +397,7 @@ jobs:
           tar xf "$archive"
         done
 
-        error=0
-        for repo in $(jq --raw-output 'del(.pkg_format) | keys | .[]' repo.json); do
-          name=$(jq --raw-output '.["'${repo}'"].name' repo.json)
-          distribution=$(jq --raw-output '.["'${repo}'"].distribution' repo.json)
-          component=$(jq --raw-output '.["'${repo}'"].component' repo.json)
-          url=$(jq --raw-output '.["'${repo}'"].url' repo.json)
-
-          if [ ! -f debs/built_${name}_packages.txt ]; then
-            continue
-          fi
-          if [ -z "$(cat debs/built_${name}_packages.txt)" ]; then
-            continue
-          fi
-
-          for arch in aarch64 arm i686 x86_64; do
-            if [ ! -f "Packages-${repo}-${arch}" ]; then
-              echo "[*] Downloading ${url}/dists/${distribution}/${component}/binary-${arch}/Packages.bz2"
-              curl -s \
-                --user-agent 'Termux-Packages/1.0\ (https://github.com/termux/termux-packages)' \
-                "${url}/dists/${distribution}/${component}/binary-${arch}/Packages.bz2" \
-                -o "Packages-${repo}-${arch}.bz2"
-              7z x "Packages-${repo}-${arch}.bz2" > /dev/null
-            fi
-            result=$(find debs -maxdepth 1 -type f | cut -d"/" -f2 | xargs -P$(nproc) -i{} grep "^Filename:.*/{}$" -nH "Packages-${repo}-${arch}" || true)
-            if [ -n "$result" ]; then
-              echo "$result" | grep -E "${arch}|all" || true
-              error=1
-            fi
-          done
-        done
-        if [ "$error" != 0 ]; then
-          echo "[!] Found local files same name with server files!"
-          echo "[!] Please revbump package, rebase or tag commit with '%ci:no-build'"
-          exit 1
-        fi
+        ./scripts/utils/termux_check_file_conflicts.sh debs
 
   upload:
     concurrency: ${{ github.workflow }}
@@ -419,9 +408,9 @@ jobs:
     runs-on: ubuntu-slim
     steps:
     - name: Clone repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Get *.deb files
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         path: ./
     - name: Upload to packages.termux.dev
@@ -467,6 +456,14 @@ jobs:
               # Final part to make changes appear in web root.
               if ! aptly_publish_repo; then
                 exit 1
+              fi
+
+              # Publish to staging repo if we haven't already
+              if [[ "$REPOSITORY_DISTRIBUTION" != "staging" ]]; then
+                REPOSITORY_DISTRIBUTION=staging
+                if ! aptly_publish_repo; then
+                  exit 1
+                fi
               fi
             fi
           fi

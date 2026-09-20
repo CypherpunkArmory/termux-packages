@@ -7,15 +7,15 @@ export TMPDIR
 # Set the build-package.sh call depth
 # If its the root call, then create a file to store the list of packages and their dependencies
 # that have been compiled at any instant by recursive calls to build-package.sh
-if (( ${TERMUX_BUILD_PACKAGE_CALL_DEPTH-0} )); then
-	export TERMUX_BUILD_PACKAGE_CALL_DEPTH=$((TERMUX_BUILD_PACKAGE_CALL_DEPTH+1))
-else
+if [[ ! "$TERMUX_BUILD_PACKAGE_CALL_DEPTH" =~ ^[0-9]+$ ]]; then
 	TERMUX_BUILD_PACKAGE_CALL_DEPTH=0
 	TERMUX_BUILD_PACKAGE_CALL_BUILT_PACKAGES_LIST_FILE_PATH="${TMPDIR}/build-package-call-built-packages-list-$(date +"%Y-%m-%d-%H.%M.%S.")$((RANDOM%1000))"
 	TERMUX_BUILD_PACKAGE_CALL_BUILDING_PACKAGES_LIST_FILE_PATH="${TMPDIR}/build-package-call-building-packages-list-$(date +"%Y-%m-%d-%H.%M.%S.")$((RANDOM%1000))"
 	export TERMUX_BUILD_PACKAGE_CALL_DEPTH TERMUX_BUILD_PACKAGE_CALL_BUILT_PACKAGES_LIST_FILE_PATH TERMUX_BUILD_PACKAGE_CALL_BUILDING_PACKAGES_LIST_FILE_PATH
 	echo -n " " > "$TERMUX_BUILD_PACKAGE_CALL_BUILT_PACKAGES_LIST_FILE_PATH"
 	touch "$TERMUX_BUILD_PACKAGE_CALL_BUILDING_PACKAGES_LIST_FILE_PATH"
+else
+	export TERMUX_BUILD_PACKAGE_CALL_DEPTH=$((TERMUX_BUILD_PACKAGE_CALL_DEPTH+1))
 fi
 
 set -euo pipefail
@@ -124,11 +124,6 @@ source "$TERMUX_SCRIPTDIR/scripts/build/setup/termux_setup_ghc_iserv.sh"
 # shellcheck source=scripts/build/setup/termux_setup_cabal.sh
 source "$TERMUX_SCRIPTDIR/scripts/build/setup/termux_setup_cabal.sh"
 
-# Utility function to setup jailbreak-cabal. It is used to remove version constraints
-# from Cabal packages.
-# shellcheck source=scripts/build/setup/termux_setup_jailbreak_cabal.sh
-source "$TERMUX_SCRIPTDIR/scripts/build/setup/termux_setup_jailbreak_cabal.sh"
-
 # Utility function for setting up GObject Introspection cross environment.
 # shellcheck source=scripts/build/setup/termux_setup_gir.sh
 source "$TERMUX_SCRIPTDIR/scripts/build/setup/termux_setup_gir.sh"
@@ -144,6 +139,10 @@ source "$TERMUX_SCRIPTDIR/scripts/build/setup/termux_setup_golang.sh"
 # Utility function for setting up LDC cross environment.
 # shellcheck source=scripts/build/setup/termux_setup_ldc.sh
 source "$TERMUX_SCRIPTDIR/scripts/build/setup/termux_setup_ldc.sh"
+
+# Utility function for nim-using packages to setup a nim toolchain.
+# shellcheck source=scripts/build/setup/termux_setup_nim.sh
+source "$TERMUX_SCRIPTDIR/scripts/build/setup/termux_setup_nim.sh"
 
 # Utility function for setting up no-integrated (GNU Binutils) as.
 # shellcheck source=scripts/build/setup/termux_setup_no_integrated_as.sh
@@ -180,6 +179,10 @@ source "$TERMUX_SCRIPTDIR/scripts/build/setup/termux_setup_ninja.sh"
 # Utility function to setup Node.js JavaScript Runtime
 # shellcheck source=scripts/build/setup/termux_setup_nodejs.sh
 source "$TERMUX_SCRIPTDIR/scripts/build/setup/termux_setup_nodejs.sh"
+
+# Utility function to setup Bun JavaScript runtime/package manager
+# shellcheck source=scripts/build/setup/termux_setup_bun.sh
+source "$TERMUX_SCRIPTDIR/scripts/build/setup/termux_setup_bun.sh"
 
 # Utility function to setup a current meson build system.
 # shellcheck source=scripts/build/setup/termux_setup_meson.sh
@@ -420,8 +423,8 @@ source "$TERMUX_SCRIPTDIR/scripts/build/termux_step_create_pacman_package.sh"
 
 # Process 'update-alternatives' entries from `.alternatives` files.
 # Not to be overridden by package scripts.
-# shellcheck source=scripts/build/termux_step_update_alternatives.sh
-source "$TERMUX_SCRIPTDIR/scripts/build/termux_step_update_alternatives.sh"
+# shellcheck source=scripts/build/termux_step_create_alternatives.sh
+source "$TERMUX_SCRIPTDIR/scripts/build/termux_step_create_alternatives.sh"
 
 # Finish the build. Not to be overridden by package scripts.
 # shellcheck source=scripts/build/termux_step_finish_build.sh

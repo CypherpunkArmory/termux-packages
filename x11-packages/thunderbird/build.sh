@@ -2,10 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://www.thunderbird.net
 TERMUX_PKG_DESCRIPTION="Unofficial Thunderbird email client"
 TERMUX_PKG_LICENSE="MPL-2.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="151.0.1"
-TERMUX_PKG_REVISION=1
+TERMUX_PKG_VERSION="154.0"
 TERMUX_PKG_SRCURL="https://archive.mozilla.org/pub/thunderbird/releases/${TERMUX_PKG_VERSION#*really}/source/thunderbird-${TERMUX_PKG_VERSION#*really}.source.tar.xz"
-TERMUX_PKG_SHA256=cf3ced40f9b136163cde35d963f8348c3d095b15bb6016e96436a5cb6913d47d
+TERMUX_PKG_SHA256=d22a5f24549a95ca1e729fbff3e24376b1d2e7eca4a66ba46e20e4e54c54b894
 TERMUX_PKG_DEPENDS="botan3, ffmpeg, fontconfig, freetype, gdk-pixbuf, glib, gtk3, libandroid-shmem, libandroid-spawn, libc++, libcairo, libevent, libffi, libice, libicu, libjpeg-turbo, libnspr, libnss, libotr, libpixman, libsm, libvpx, libwebp, libx11, libxcb, libxcomposite, libxdamage, libxext, libxfixes, libxrandr, libxtst, pango, pulseaudio, zlib"
 TERMUX_PKG_BUILD_DEPENDS="libcpufeatures, libice, libsm"
 TERMUX_PKG_BUILD_IN_SRC=true
@@ -105,7 +104,7 @@ termux_step_pre_configure() {
 		sed -i "/\[patch.crates-io\]/a $crate = { path = \"$crate_dest_dir\" }" "$TERMUX_PKG_SRCDIR/comm/rust/Cargo.toml"
 	done
 
-	patch="$TERMUX_PKG_BUILDER_DIR/0029-rust-cc-do-not-concatenates-all-the-CFLAGS.patch"
+	patch="$TERMUX_PKG_BUILDER_DIR/0028-rust-cc-do-not-concatenates-all-the-CFLAGS.patch"
 	echo "Applying patch: $patch"
 	patch -p4 -d "$crate_dest_dir" < "$patch"
 }

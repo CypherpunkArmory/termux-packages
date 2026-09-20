@@ -1,0 +1,9 @@
+TERMUX_PKG_HOMEPAGE=https://www.prevanders.net/dwarf.html
+TERMUX_PKG_DESCRIPTION="Library for handling DWARF Debugging Information Format"
+TERMUX_PKG_LICENSE="BSD 2-Clause, BSD 3-Clause, GPL-2.0-only, LGPL-2.1-only, Public Domain"
+TERMUX_PKG_MAINTAINER="@termux"
+TERMUX_PKG_VERSION="2.3.2"
+TERMUX_PKG_AUTO_UPDATE=true
+TERMUX_PKG_SRCURL="https://github.com/davea42/libdwarf-code/releases/download/v$TERMUX_PKG_VERSION/libdwarf-$TERMUX_PKG_VERSION.tar.xz"
+TERMUX_PKG_SHA256=7992e7b9019ebfabdda5773e86243517c48cf89fafed3209e853692bc9573efd
+TERMUX_PKG_DEPENDS="elfutils, zlib, zstd"

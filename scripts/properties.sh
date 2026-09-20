@@ -300,7 +300,7 @@ TERMUX_SCRIPTDIR="${TERMUX_SCRIPTDIR:-TERMUX_PKGS__BUILD__REPO_ROOT_DIR}" # Depr
 
 
 TERMUX_SDK_REVISION=9123335
-TERMUX_ANDROID_BUILD_TOOLS_VERSION=33.0.1
+TERMUX_ANDROID_BUILD_TOOLS_VERSION=37.0.0
 # when changing the above:
 # change TERMUX_PKG_VERSION (and remove TERMUX_PKG_REVISION if necessary) in:
 #   apksigner, d8
@@ -314,7 +314,7 @@ TERMUX_NDK_VERSION="${TERMUX_NDK_VERSION_NUM}${TERMUX_NDK_REVISION}"
 # and update SHA256 sums in scripts/setup-android-sdk.sh
 # check all packages build and run correctly and bump if needed
 
-: "${TERMUX_HOST_LLVM_MAJOR_VERSION:="20"}"
+: "${TERMUX_HOST_LLVM_MAJOR_VERSION:="21"}"
 : "${TERMUX_HOST_LLVM_BASE_DIR:="/usr/lib/llvm-${TERMUX_HOST_LLVM_MAJOR_VERSION}"}"
 
 : "${TERMUX_JAVA_HOME:=/usr/lib/jvm/java-17-openjdk-amd64}"

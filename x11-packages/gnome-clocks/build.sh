@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE="https://apps.gnome.org/Clocks/"
 TERMUX_PKG_DESCRIPTION="Keep track of time"
 TERMUX_PKG_LICENSE="GPL-2.0-or-later"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="50.0"
+TERMUX_PKG_VERSION="51.0"
 TERMUX_PKG_SRCURL=https://download.gnome.org/sources/gnome-clocks/${TERMUX_PKG_VERSION%.*}/gnome-clocks-${TERMUX_PKG_VERSION}.tar.xz
-TERMUX_PKG_SHA256=bf167f7f44f4f2fb424d4716652c9ba1f29e16e49071e26a1bb833f8dce794c6
+TERMUX_PKG_SHA256=4bdf9c0481a83037da1d0fa26d2c2c6a80cb736458fd18fde14acaf7924874c6
 TERMUX_PKG_DEPENDS="geoclue, geocode-glib, glib, gnome-desktop4, gtk4, libadwaita, libgweather"
 TERMUX_PKG_BUILD_DEPENDS="g-ir-scanner, gettext, glib-cross, valac, vorbis-tools"
 TERMUX_PKG_PYTHON_COMMON_DEPS="itstool"
@@ -13,15 +13,13 @@ TERMUX_PKG_HOSTBUILD=true
 
 termux_step_host_build() {
 	local -a ubuntu_packages=(
+		# vorbis-tools
+		"vorbis-tools"
 		"libao-common"
 		"libao4"
-		"libflac12t64"
-		"libogg0"
+		"libopusfile0"
 		"libspeex1"
-		"libvorbis0a"
-		"libvorbisenc2"
 		"libvorbisfile3"
-		"vorbis-tools"
 	)
 
 	termux_download_ubuntu_packages "${ubuntu_packages[@]}"

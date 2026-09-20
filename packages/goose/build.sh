@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://pressly.github.io/goose
 TERMUX_PKG_DESCRIPTION="A database migration tool. Supports SQL migrations and Go functions."
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="3.27.1"
+TERMUX_PKG_VERSION="3.28.0"
 TERMUX_PKG_SRCURL="https://github.com/pressly/goose/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz"
-TERMUX_PKG_SHA256=55c1da80ae3fbbb4b893dc80d569cd98d7089ccd8e54639f42a87032105556ec
+TERMUX_PKG_SHA256=71644c9d60710096ecc721edba4edf44e1f53cd0417564321c4b848e26c75bfa
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_AUTO_UPDATE=true
 

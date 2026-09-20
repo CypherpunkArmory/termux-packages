@@ -2,9 +2,10 @@ TERMUX_PKG_HOMEPAGE=https://nodejs.org/
 TERMUX_PKG_DESCRIPTION="Open Source, cross-platform JavaScript runtime environment"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="Yaksh Bariya <thunder-coding@termux.dev>"
-TERMUX_PKG_VERSION=26.2.0
+TERMUX_PKG_VERSION=26.4.0
+TERMUX_PKG_REVISION=1
 TERMUX_PKG_SRCURL=https://nodejs.org/dist/v${TERMUX_PKG_VERSION}/node-v${TERMUX_PKG_VERSION}.tar.xz
-TERMUX_PKG_SHA256=ea82be7db418f54b3ef153a02d44d4f6748466f4765ae80bc484f34af40df610
+TERMUX_PKG_SHA256=9eceb3621024069d91035b5471d2ebe86aa04d22dbeba72a782eaf36ff9183ac
 # thunder-coding: don't try to autoupdate nodejs, that thing takes 2 whole hours to build for a single arch, and requires a lot of patch updates everytime. Also I run tests everytime I update it to ensure least bugs
 TERMUX_PKG_AUTO_UPDATE=false
 # Note that we do not use a shared libuv to avoid an issue with the Android
@@ -120,6 +121,12 @@ termux_step_configure() {
 		termux_error_exit "Unsupported arch '$TERMUX_ARCH'"
 	fi
 
+	# aligned_alloc is used in cctest binary
+	if [[ "$TERMUX_PKG_API_LEVEL" -lt 28 ]]; then
+		CFLAGS+=" -Daligned_alloc=memalign"
+		CXXFLAGS+=" -Daligned_alloc=memalign"
+	fi
+
 	# Do not enable by default as it has severe performance degradations.
 	# Causes upto 10x performance degradations
 	#
@@ -162,6 +169,12 @@ termux_step_configure() {
 	fi
 	# See note above TERMUX_PKG_DEPENDS why we do not use a shared libuv.
 	# When building with ninja, build.ninja is generated for both Debug and Release builds.
+	# Make node-gyp use the headers installed with this package
+	# ($TERMUX_PREFIX/include/node) instead of downloading the official ones
+	# from nodejs.org. The installed headers are patched by common.gypi.patch;
+	# without this flag node-gyp pulls the upstream common.gypi whose android
+	# branch references an undefined android_ndk_path variable and breaks
+	# every native module build ("gyp: Undefined variable android_ndk_path").
 	./configure \
 		--prefix=$TERMUX_PREFIX \
 		--dest-cpu=$DEST_CPU \
@@ -174,6 +187,7 @@ termux_step_configure() {
 		--shared-zlib \
 		--with-intl=system-icu \
 		--cross-compiling \
+		--use-prefix-to-find-headers \
 		--ninja \
 		"${_DEBUG[@]}"
 

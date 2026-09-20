@@ -7,7 +7,7 @@
 
 # The MIT License (MIT)
 
-# Copyright (c) 2022 Aditya Alok <alok@termux.org>
+# Copyright (c) 2022-2026 Aditya Alok <alok@termux.dev>
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -150,7 +150,7 @@ repology() {
 			curl -A "Termux update checker 1.1 (github.com/termux/termux-packages)" \
 				--silent --location --retry 5 \
 				--retry-delay 5 --retry-max-time 60 \
-				"https://repology.org/api/v1/projects/?inrepo=termux&&repos=1" |
+				"https://repology.amdmi3.ru/api/v1/projects/?inrepo=termux&&repos=1" |
 				jq -r 'keys[]'
 		)
 

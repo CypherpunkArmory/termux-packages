@@ -1,13 +1,15 @@
 TERMUX_PKG_HOMEPAGE=https://maunium.net/go/mautrix-whatsapp/
 TERMUX_PKG_DESCRIPTION="A Matrix-WhatsApp puppeting bridge"
-TERMUX_PKG_LICENSE="AGPL-V3"
+TERMUX_PKG_LICENSE="AGPL-3.0-or-later"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="0.2605.0"
-TERMUX_PKG_SRCURL=https://github.com/mautrix/whatsapp/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=f84aabb2af10d648a9ff4133d32b066a80aaf511a9b84ca456d244d9734e8f4a
+TERMUX_PKG_VERSION="26.09"
+TERMUX_PKG_SRCURL="https://github.com/mautrix/whatsapp/archive/refs/tags/v0.${TERMUX_PKG_VERSION/.}.0.tar.gz"
+TERMUX_PKG_SHA256=d44cb66d1594eb613753150ae7947de5315289fbd4bdc1468758848efb66ad7a
 TERMUX_PKG_DEPENDS="libolm"
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_AUTO_UPDATE=true
+TERMUX_PKG_UPDATE_VERSION_REGEXP="0\.\K\d+(?=\.0)"
+TERMUX_PKG_UPDATE_VERSION_SED_REGEXP="s/([0-9][0-9])([0-9][0-9])/\1.\2/"
 
 termux_step_pre_configure() {
 	termux_setup_golang

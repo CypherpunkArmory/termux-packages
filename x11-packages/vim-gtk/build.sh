@@ -10,9 +10,9 @@ TERMUX_PKG_CONFLICTS="vim"
 TERMUX_PKG_BREAKS="vim-python"
 TERMUX_PKG_REPLACES="vim-python"
 TERMUX_PKG_PROVIDES="vim-python"
-TERMUX_PKG_VERSION="9.2.0550"
+TERMUX_PKG_VERSION="9.2.1100"
 TERMUX_PKG_SRCURL="https://github.com/vim/vim/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz"
-TERMUX_PKG_SHA256=c7e98500cf0f44cd76f53cee6cbcc4599efb8db90d34866c0156951ec4b97daf
+TERMUX_PKG_SHA256=01f855db1f2f61a626eae09e684ee1e585b7d954431d49b29eb0a06632436d72
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_CONFFILES="share/vim/vimrc"
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
@@ -120,7 +120,7 @@ termux_step_post_make_install() {
 	# Avoid overlap with the `xxd` subpackage of `vim` by removing it from vim-gtk
 	export TERMUX_PKG_RM_AFTER_INSTALL="
 	bin/xxd
-	share/man/man1/xxd.1
+	share/man/man1/xxd.1.gz
 	share/vim/vim${_VIM_VERSION}/spell/en.ascii*
 	share/vim/vim${_VIM_VERSION}/print
 	share/vim/vim${_VIM_VERSION}/tools

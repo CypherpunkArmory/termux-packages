@@ -2,9 +2,14 @@ TERMUX_PKG_HOMEPAGE=https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home
 TERMUX_PKG_DESCRIPTION="Library for parsing XML documents"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="2.15.3"
+TERMUX_PKG_VERSION="2.15.4"
+TERMUX_PKG_REVISION="1"
 TERMUX_PKG_SRCURL="https://download.gnome.org/sources/libxml2/${TERMUX_PKG_VERSION%.*}/libxml2-${TERMUX_PKG_VERSION}.tar.xz"
-TERMUX_PKG_SHA256=78262a6e7ac170d6528ebfe2efccdf220191a5af6a6cd61ea4a9a9a5042c7a07
+TERMUX_PKG_SHA256=98087fd181d9070724f3fbc65c7377db03038eb92bd882374daff44940138821
+TERMUX_PKG_DEPENDS="libandroid-glob, libiconv, zlib"
+TERMUX_PKG_BUILD_DEPENDS="doxygen, python, readline"
+TERMUX_PKG_BREAKS="libxml2-dev"
+TERMUX_PKG_REPLACES="libxml2-dev"
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_HOSTBUILD=true
 TERMUX_PKG_SETUP_PYTHON=true
@@ -14,7 +19,6 @@ TERMUX_PKG_SETUP_PYTHON=true
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 	-Ddocs=enabled
 	-Dhttp=enabled
-	-Dicu=enabled
 	-Dlegacy=enabled
 "
 # Python bindings
@@ -31,14 +35,11 @@ share/doc/libxml2/html
 share/doc/libxml2/xmlcatalog.html
 share/doc/libxml2/xmllint.html
 "
-TERMUX_PKG_DEPENDS="libandroid-glob, libiconv, libicu, zlib"
-TERMUX_PKG_BUILD_DEPENDS="doxygen, python, readline"
-TERMUX_PKG_BREAKS="libxml2-dev"
-TERMUX_PKG_REPLACES="libxml2-dev"
 
 termux_step_host_build() {
 	if [[ "$TERMUX_ON_DEVICE_BUILD" == "false" ]]; then
-		termux_download_ubuntu_packages doxygen libclang-cpp18 libclang1-18 libfmt9 libxapian30
+		# We need doxygen, other packages are it's dependencies
+		termux_download_ubuntu_packages doxygen libfmt10 libspdlog1.15 libxapian30
 	fi
 }
 

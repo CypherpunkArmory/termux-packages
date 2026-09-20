@@ -4,11 +4,12 @@ TERMUX_PKG_DESCRIPTION="Telegram Desktop Client"
 TERMUX_PKG_LICENSE="custom"
 TERMUX_PKG_LICENSE_FILE="LICENSE, LEGAL"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="6.8.2"
+TERMUX_PKG_VERSION="7.0.6"
+TERMUX_PKG_REVISION="2"
 TERMUX_PKG_SRCURL="https://github.com/telegramdesktop/tdesktop/releases/download/v$TERMUX_PKG_VERSION/tdesktop-$TERMUX_PKG_VERSION-full.tar.gz"
-TERMUX_PKG_SHA256=cce1c196ef00703e9872d7072defd14860c970effc52d52d990745c8dca16cac
-TERMUX_PKG_DEPENDS="abseil-cpp, boost, ffmpeg, glib, hicolor-icon-theme, hunspell, kf6-kcoreaddons, libandroid-shmem, libc++, libdispatch, libdrm, libjxl, liblz4, libminizip, protobuf, librnnoise, libsigc++-3.0, libx11, libxcomposite, libxdamage, libxrandr, libxtst, openal-soft, opengl, openh264, openssl, pipewire, pulseaudio, qt6-qtbase, qt6-qtimageformats, qt6-qtsvg, xxhash, zlib"
-TERMUX_PKG_BUILD_DEPENDS="ada, aosp-libs, boost-headers, glib-cross, qt6-qtbase-cross-tools"
+TERMUX_PKG_SHA256=0cebeaafb8c6fe021f996304979c4ac731d47d2217e37b1b8f0502f98fedbd23
+TERMUX_PKG_DEPENDS="abseil-cpp, boost, ffmpeg, glib, hicolor-icon-theme, hunspell, kf6-kcoreaddons, libandroid-shmem, libc++, libdispatch, libdrm, libjxl, liblz4, libminizip, protobuf, librnnoise, libsigc++-3.0, libx11, libxcomposite, libxdamage, libxrandr, libxtst, openal-soft, opengl, openh264, openssl, pipewire, pulseaudio, qt6-qtbase, qt6-qtimageformats, qt6-qtshadertools, qt6-qtsvg, qt6-qtwayland, xxhash, zlib"
+TERMUX_PKG_BUILD_DEPENDS="ada, aosp-libs, boost-headers, glib-cross, qt6-qtbase-cross-tools, qt6-qtshadertools-cross-tools"
 TERMUX_PKG_VERSIONED_GIR=false
 TERMUX_PKG_AUTO_UPDATE=true
 
@@ -24,6 +25,7 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DDESKTOP_APP_DISABLE_AUTOUPDATE=ON
 -DTDESKTOP_API_ID=611335
 -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c
+-DCRL_FORCE_QT=ON
 "
 
 __tg_owt_fetch_source() {
@@ -150,6 +152,7 @@ __tg_owt_build() {
 -DBUILD_SHARED_LIBS=OFF
 -DBUILD_STATIC_LIBS=ON
 -DTG_OWT_USE_PIPEWIRE=OFF
+-DTG_OWT_BUILD_AUDIO_BACKENDS=OFF
 "
 
 	# Configure
@@ -243,6 +246,7 @@ termux_step_configure() {
 
 		CPPFLAGS+=" -DG_VA_COPY_AS_ARRAY=0"
 		TERMUX_PKG_EXTRA_CONFIGURE_ARGS+=" -DPROTOBUF_PROTOC_EXECUTABLE=$(command -v protoc)"
+		TERMUX_PKG_EXTRA_CONFIGURE_ARGS+=" -DQSB_EXECUTABLE=$TERMUX_PREFIX/opt/qt6/cross/lib/qt6/bin/qsb"
 
 		mkdir -p "$TERMUX_PKG_TMPDIR/bin"
 		local _type

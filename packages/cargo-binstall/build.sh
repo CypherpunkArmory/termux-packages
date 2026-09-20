@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://github.com/cargo-bins/cargo-binstall
 TERMUX_PKG_DESCRIPTION="Tool to fetch and install precompiled musl-based static binaries from the Rust ecosystem"
 TERMUX_PKG_LICENSE="GPL-3.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="1.19.1"
+TERMUX_PKG_VERSION="1.23.0"
 TERMUX_PKG_SRCURL="https://github.com/cargo-bins/cargo-binstall/archive/refs/tags/v$TERMUX_PKG_VERSION.tar.gz"
-TERMUX_PKG_SHA256=78a514462b487556265bb68adf9c0288b0e4263c9b08b583825b1cf685e36697
+TERMUX_PKG_SHA256=e86f3c97853d21ac62b053b177f7920de3a3967f81042b441961087c98938fb3
 TERMUX_PKG_DEPENDS="resolv-conf"
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_AUTO_UPDATE=true
@@ -17,7 +17,6 @@ termux_step_pre_configure() {
 		-mindepth 1 -maxdepth 1 -type d \
 		! -wholename ./vendor/rustls-platform-verifier \
 		! -wholename ./vendor/hickory-resolver \
-		! -wholename ./vendor/camino \
 		! -wholename ./vendor/resolv-conf \
 		! -wholename ./vendor/netdev \
 		-exec rm -rf '{}' \;
@@ -28,7 +27,7 @@ termux_step_pre_configure() {
 		-e "s|ANDROID|DISABLING_THIS_BECAUSE_IT_IS_FOR_BUILDING_AN_APK|g" \
 		-e 's|"linux"|"android"|g'
 
-	find vendor/{hickory-resolver,camino,resolv-conf,netdev} -type f -print0 | \
+	find . -type f -print0 | \
 		xargs -0 sed -i \
 		-e "s|/etc|$TERMUX_PREFIX/etc|g"
 
@@ -37,7 +36,6 @@ termux_step_pre_configure() {
 		[patch.crates-io]
 		rustls-platform-verifier = { path = "./vendor/rustls-platform-verifier" }
 		hickory-resolver = { path = "./vendor/hickory-resolver" }
-		camino = { path = "./vendor/camino" }
 		resolv-conf = { path = "./vendor/resolv-conf" }
 		netdev = { path = "./vendor/netdev" }
 	EOF

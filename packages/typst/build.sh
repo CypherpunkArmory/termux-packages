@@ -2,13 +2,13 @@ TERMUX_PKG_HOMEPAGE=https://typst.app/
 TERMUX_PKG_DESCRIPTION="A new markup-based typesetting system that is powerful and easy to learn"
 TERMUX_PKG_LICENSE="Apache-2.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="0.14.2"
+TERMUX_PKG_VERSION="0.15.1"
 TERMUX_PKG_SRCURL="https://github.com/typst/typst/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz"
-TERMUX_PKG_SHA256=70a56445020ca05efc571c7b07a1a9f52eb93842d420518693c077ae74e54142
+TERMUX_PKG_SHA256=c07909e01a2a6941e52c9b616e48c209c755eed416d62bcf5583c37a4aca01a3
+TERMUX_PKG_DEPENDS="openssl"
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_AUTO_UPDATE=true
-TERMUX_PKG_UPDATE_VERSION_REGEXP="\d+\.\d+\.\d+"
-TERMUX_PKG_DEPENDS="openssl"
+TERMUX_PKG_UPDATE_VERSION_REGEXP="\d+\.\d+\.\d+(?!-)"
 
 termux_step_pre_configure() {
 	termux_setup_rust

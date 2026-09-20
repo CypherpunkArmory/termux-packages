@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://lux.lumen-labs.org
 TERMUX_PKG_DESCRIPTION="A package manager for Lua, similar to luarocks"
 TERMUX_PKG_LICENSE="LGPL-3.0-or-later"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="0.30.4"
+TERMUX_PKG_VERSION="0.45.2"
 TERMUX_PKG_SRCURL="https://github.com/lumen-oss/lux/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz"
-TERMUX_PKG_SHA256=6280f5b606f3ff9b9ce287fce5811f4c4100aa62c736727e8ad9b50910ca18ce
+TERMUX_PKG_SHA256=1b37a74ad83e518065ae3e853bcfc0e5ed3f8f54a4d6041854716d686213820d
 TERMUX_PKG_DEPENDS="bzip2, gpgme, libgit2, libgpg-error, lua54, openssl, xz-utils"
 TERMUX_PKG_PROVIDES="lx"
 TERMUX_PKG_AUTO_UPDATE=true
@@ -49,41 +49,33 @@ termux_step_host_build() {
 		return
 	fi
 
-	# libgpgme-dev and any dependencies that aren't in the ubuntu builder at time of writing
-	local -a ubuntu_packages=(
-		"dirmngr"
-		"gnupg"
-		"gnupg-l10n"
-		"gnupg-utils"
-		"gpg"
-		"gpg-agent"
-		"gpg-wks-client"
-		"gpgconf"
-		"gpgsm"
-		"gpgv"
-		"keyboxd"
-		"libassuan-dev"
-		"libgpgme-dev"
-		"libgpgme11t64"
-	)
-
-	termux_download_ubuntu_packages "${ubuntu_packages[@]}"
-
-	PKG_CONFIG_PATH_x86_64_unknown_linux_gnu="${TERMUX_PKG_HOSTBUILD_DIR}/ubuntu_packages/usr/lib/x86_64-linux-gnu/pkgconfig"
-	RUSTFLAGS="-L${TERMUX_PKG_HOSTBUILD_DIR}/ubuntu_packages/usr/lib/x86_64-linux-gnu"
-
-	export PKG_CONFIG_PATH_x86_64_unknown_linux_gnu RUSTFLAGS
-
 	cd "${TERMUX_PKG_SRCDIR}" || termux_error_exit "Couldn't enter source code directory: ${TERMUX_PKG_SRCDIR}"
 
 	termux_setup_rust
+
+	termux_download_ubuntu_packages libgpgme-dev libassuan-dev
+
+	local HOSTBUILD_ROOTFS="$TERMUX_PKG_HOSTBUILD_DIR/ubuntu_packages"
+	local HOSTBUILD_ARCH_LIBDIR="/usr/lib/x86_64-linux-gnu"
+
+	find "${HOSTBUILD_ROOTFS}" -type f -name '*.pc' | \
+		xargs -n 1 sed -i -e "s|/usr|${HOSTBUILD_ROOTFS}/usr|g"
+	# delete all static libraries to prevent errors:
+	# rust-lld: error: undefined symbol: assuan_set_flag
+	# referenced by engine-assuan.o:(llass_new) in archive
+	# /home/builder/.termux-build/lux-cli/host-build/ubuntu_packages
+	# /usr/lib/x86_64-linux-gnu/libgpgme.a
+	find "${HOSTBUILD_ROOTFS}" -type f -name '*.a' -delete
+	find "${HOSTBUILD_ROOTFS}${HOSTBUILD_ARCH_LIBDIR}" -xtype l \
+		-exec sh -c "ln -snvf ${HOSTBUILD_ARCH_LIBDIR}/\$(readlink \$1) \$1" sh {} \;
+
+	PKG_CONFIG_PATH_x86_64_unknown_linux_gnu="${HOSTBUILD_ROOTFS}${HOSTBUILD_ARCH_LIBDIR}/pkgconfig"
+	export PKG_CONFIG_PATH_x86_64_unknown_linux_gnu
 
 	cargo fetch --locked
 
 	# build shell completions
 	cargo run --package xtask --release --frozen -- dist-completions
-
-	unset PKG_CONFIG_PATH_x86_64_unknown_linux_gnu RUSTFLAGS
 
 	# preserve the hostbuilt shell completions
 	rm -rf "${TERMUX_PKG_HOSTBUILD_DIR}/dist/"

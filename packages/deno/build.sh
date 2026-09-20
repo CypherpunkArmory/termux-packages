@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://deno.land/
 TERMUX_PKG_DESCRIPTION="A modern runtime for JavaScript and TypeScript"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="@licy183"
-TERMUX_PKG_VERSION="1:2.8.1"
+TERMUX_PKG_VERSION="1:2.9.7"
 TERMUX_PKG_SRCURL=https://github.com/denoland/deno/releases/download/v${TERMUX_PKG_VERSION:2}/deno_src.tar.gz
-TERMUX_PKG_SHA256=062d821f7d8bdb6ccbc79a5b1625b2a3f3378f187fc78018a77eada32d5fcd6c
+TERMUX_PKG_SHA256=21069d2f4dd65b6832e3f5c373c24a43a8d35cb3d68d3841e15d0582bed39ea8
 TERMUX_PKG_DEPENDS="libandroid-stub, libffi, libsqlite, zlib"
 TERMUX_PKG_BUILD_DEPENDS="aosp-libs"
 TERMUX_PKG_BUILD_IN_SRC=true
@@ -54,10 +54,6 @@ termux_step_pre_configure() {
 	patch --silent -p1 \
 		-d ./vendor/v8/ \
 		< "$TERMUX_PKG_BUILDER_DIR"/rusty-v8-search-files-with-target-suffix.diff
-
-	patch --silent -p1 \
-		-d ./vendor/deno_panic/ \
-		< "$TERMUX_PKG_BUILDER_DIR"/deno-panic-dyn_slide.diff
 
 	patch --silent -p1 \
 		-d ./vendor/cmake/ \

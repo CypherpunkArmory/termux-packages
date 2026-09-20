@@ -3,15 +3,16 @@ TERMUX_PKG_DESCRIPTION="General purpose cryptographic library based on the code 
 TERMUX_PKG_LICENSE="GPL-2.0, LGPL-2.1, BSD 3-Clause, MIT, Public Domain"
 TERMUX_PKG_LICENSE_FILE="COPYING, COPYING.LIB, LICENSES"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="1.11.2"
-TERMUX_PKG_REVISION=1
+TERMUX_PKG_VERSION="1.12.3"
 TERMUX_PKG_SRCURL=https://www.gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-${TERMUX_PKG_VERSION}.tar.bz2
-TERMUX_PKG_SHA256=6ba59dd192270e8c1d22ddb41a07d95dcdbc1f0fb02d03c4b54b235814330aac
+TERMUX_PKG_SHA256=98d1b0b3202d2b03fa754a35aa3cbbfcf526a3260d8d2ee213748001b1043006
 TERMUX_PKG_DEPENDS="libgpg-error"
 TERMUX_PKG_BREAKS="libgcrypt-dev"
 TERMUX_PKG_REPLACES="libgcrypt-dev"
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 --disable-jent-support
+ac_cv_func_getrandom=no
+ac_cv_func_getentropy=no
 "
 
 termux_step_post_get_source() {

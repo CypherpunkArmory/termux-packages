@@ -2,12 +2,12 @@ TERMUX_PKG_HOMEPAGE="https://invent.kde.org/frameworks/kcoreaddons"
 TERMUX_PKG_DESCRIPTION="Utilities for core application functionality and accessing the OS (KDE)"
 TERMUX_PKG_LICENSE="LGPL-2.1"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="6.26.0"
+TERMUX_PKG_VERSION="6.30.0"
 TERMUX_PKG_SRCURL="https://download.kde.org/stable/frameworks/${TERMUX_PKG_VERSION%.*}/kcoreaddons-${TERMUX_PKG_VERSION}.tar.xz"
-TERMUX_PKG_SHA256=92fdbfab68e52d9eacf44a992f01cb364d6395c24441e2fd47dd48a23b3281f6
+TERMUX_PKG_SHA256=cc68fe15beb0fca2036cff8742f468c1345406bf99793fffacbf8f2a3f89bc4b
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_HOSTBUILD=true
-TERMUX_PKG_DEPENDS="libc++, qt6-qtbase, qt6-qtdeclarative, shared-mime-info"
+TERMUX_PKG_DEPENDS="libc++, libmount, qt6-qtbase, qt6-qtdeclarative, shared-mime-info"
 TERMUX_PKG_BUILD_DEPENDS="extra-cmake-modules (>= ${TERMUX_PKG_VERSION%.*}), qt6-qttools"
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DBUILD_PYTHON_BINDINGS=OFF

@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://getfresh.dev/
 TERMUX_PKG_DESCRIPTION="Text editor for your terminal: easy, powerful and fast"
 TERMUX_PKG_LICENSE="GPL-2.0-only"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="0.3.10"
+TERMUX_PKG_VERSION="0.5.1"
 TERMUX_PKG_SRCURL="https://github.com/sinelaw/fresh/releases/download/v$TERMUX_PKG_VERSION/fresh-editor-$TERMUX_PKG_VERSION-source.tar.gz"
-TERMUX_PKG_SHA256=f20072ee692edd1ca68573f510921b08b0ddf7725d4a353c907967c751c3053f
+TERMUX_PKG_SHA256=a80c672114a2d093ad7e303ba5cf909e3e012d8066764e541a02d0da048ee8fc
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_BUILD_IN_SRC=true
 
@@ -51,7 +51,12 @@ termux_step_pre_configure() {
 		-e 's|"linux"|"android"|g' \
 		-e "s|libxkbcommon.so.0|libxkbcommon.so|g" \
 		-e "s|libxkbcommon-x11.so.0|libxkbcommon-x11.so|g" \
-		-e "s|libxcb.so.1|libxcb.so|g" \
+		-e "s|libxcb.so.1|libxcb.so|g"
+
+	find . -type f -print0 | \
+		xargs -0 sed -i \
+		-e "s|/usr|$TERMUX_PREFIX|g" \
+		-e "s|/var|$TERMUX_PREFIX/var|g" \
 		-e "s|/tmp|$TERMUX_PREFIX/tmp|g"
 
 	echo "" >> Cargo.toml
@@ -107,7 +112,7 @@ termux_step_make_install() {
 	fi
 
 	# Keymaps
-	cp -r crates/fresh-editor/keymaps "$TERMUX_PREFIX/share/$TERMUX_PKG_NAME/"
+	cp -r crates/fresh-editor-core/keymaps "$TERMUX_PREFIX/share/$TERMUX_PKG_NAME/"
 }
 
 termux_step_post_make_install() {

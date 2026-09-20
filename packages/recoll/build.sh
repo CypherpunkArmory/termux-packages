@@ -2,11 +2,11 @@ TERMUX_PKG_HOMEPAGE=https://www.recoll.org/
 TERMUX_PKG_DESCRIPTION="Full-text search for your desktop"
 TERMUX_PKG_LICENSE="GPL-2.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="1.43.17"
+TERMUX_PKG_VERSION="1.44.2"
 TERMUX_PKG_SRCURL="https://www.recoll.org/recoll-${TERMUX_PKG_VERSION}.tar.gz"
-TERMUX_PKG_SHA256=2e70740a016bd9d337aca5ee407891ee86736457020c19408f33121354776e2d
+TERMUX_PKG_SHA256=1fb8762b6816dac1a17fe7ff5669cd49cad0aedf62284a93e58ff3e7123c7b13
 TERMUX_PKG_AUTO_UPDATE=true
-TERMUX_PKG_DEPENDS="aspell, file, jsoncpp,  libc++, libiconv, libxapian, libxml2, libxslt, zlib"
+TERMUX_PKG_DEPENDS="aspell, jsoncpp, libc++, libiconv, libmagic, libxapian, libxml2, libxslt, zlib"
 TERMUX_PKG_PYTHON_COMMON_BUILD_DEPS="wheel"
 # -Dext4-birthtime=false disables the use of the statx syscall
 # it is also set to false by default at time of writing,

@@ -3,9 +3,9 @@ TERMUX_PKG_DESCRIPTION="Provides cryptographic recipes and primitives to Python 
 TERMUX_PKG_LICENSE="Apache-2.0, BSD 3-Clause"
 TERMUX_PKG_LICENSE_FILE="LICENSE, LICENSE.APACHE, LICENSE.BSD"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="48.0.0"
-TERMUX_PKG_SRCURL=https://github.com/pyca/cryptography/archive/refs/tags/${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=6afca628a004be66b3793481e02eb22ad4a067a052a6785c3736cc135dc7dc24
+TERMUX_PKG_VERSION="50.0.1"
+TERMUX_PKG_SRCURL="https://github.com/pyca/cryptography/archive/refs/tags/${TERMUX_PKG_VERSION}.tar.gz"
+TERMUX_PKG_SHA256=649f6cfd4c9988e85adc3b480479d7e36f43f8e4861cac0e0c7fc68b45dd7075
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_DEPENDS="openssl, python, python-pip"
 TERMUX_PKG_BUILD_IN_SRC=true
@@ -19,6 +19,7 @@ termux_step_configure() {
 	export CARGO_BUILD_TARGET="${CARGO_TARGET_NAME}"
 	export PYO3_CROSS_LIB_DIR="${TERMUX_PREFIX}/lib"
 	export ANDROID_API_LEVEL="${TERMUX_PKG_API_LEVEL}"
+	export CFLAGS_${CARGO_TARGET_NAME//-/_}+=" -I$TERMUX_PREFIX/include/python$TERMUX_PYTHON_VERSION"
 }
 
 termux_step_make_install() {
@@ -30,4 +31,15 @@ termux_step_make_install() {
 	# cross-python and picked up for execution instead of maturin built for
 	# build-python
 	cross-pip install --no-build-isolation --no-deps . --prefix $TERMUX_PREFIX
+}
+
+termux_step_post_make_install() {
+	# maturin doesn't honor python-config, so it doesn't link the built module against libpython
+	# Due to differences in between the Android linker and on Linux, linking against libpython is needed
+	# Looking at https://github.com/PyO3/pyo3/issues/1082, it seems like maturin does try to link against libpython
+	# but looking at the source, it seems to do only for binary targets, not library.
+	# Anyways, do it ourselves not worth the effort to ask upstream for a single package we have
+	patchelf \
+		--add-needed libpython${TERMUX_PYTHON_VERSION}.so \
+		"${TERMUX_PREFIX}/lib/python${TERMUX_PYTHON_VERSION}/site-packages/cryptography/hazmat/bindings/_rust.abi3.so"
 }
