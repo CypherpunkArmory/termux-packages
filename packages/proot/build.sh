@@ -4,9 +4,9 @@ TERMUX_PKG_DESCRIPTION="Emulate chroot, bind mount and binfmt_misc for non-root 
 TERMUX_PKG_LICENSE="GPL-2.0"
 TERMUX_PKG_MAINTAINER="Michal Bednarski @michalbednarski"
 # Just bump commit and version when needed:
-_COMMIT=d00c2eba6e9c2573b78a2d42196c6e7fccb23b56
+_COMMIT=613bb36a6f825789a5c11aaedc8d4179afa53945
 TERMUX_PKG_VERSION=5.1.107
-TERMUX_PKG_REVISION=70
+TERMUX_PKG_REVISION=71
 TERMUX_PKG_SRCURL=git+https://github.com/CypherpunkArmory/proot.git
 TERMUX_PKG_GIT_BRANCH=droid_files
 TERMUX_PKG_SHA256=SKIP_CHECKSUM
